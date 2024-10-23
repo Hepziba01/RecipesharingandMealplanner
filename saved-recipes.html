@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Recipes</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Your CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #ffffff;
+            color: #ffffff;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6d9bca;
+        }
+
+        #recipes, #mealPlans {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #0e0c0c;
+            box-shadow: 0 2px 5px rgba(22, 127, 246, 0.831);
+            max-width: 600px;
+        }
+
+        h2 {
+            color: #e67e22;
+        }
+
+        h3 {
+            color: #3498db;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        /* Responsive styling */
+        @media (max-width: 600px) {
+            #recipes, #mealPlans {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Saved Recipes and Meal Plans</h1>
+    <div id="recipes"></div>
+    <div id="mealPlans"></div>
+
+    <script>
+        async function fetchSavedData() {
+            try {
+                const response = await fetch('/api/savedRecipes');
+                const data = await response.json();
+                if (data.success) {
+                    displayRecipes(data.savedRecipes);
+                    displayMealPlans(data.mealPlans);
+                } else {
+                    console.error('Failed to fetch data:', data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        function displayRecipes(recipes) {
+            const recipesDiv = document.getElementById('recipes');
+            recipes.forEach(recipe => {
+                const recipeElement = document.createElement('div');
+                recipeElement.innerHTML = `
+                    <h2>${recipe.title}</h2>
+                    <p>Ingredients: ${recipe.ingredients.join(', ')}</p>
+                    <p>Instructions: ${recipe.instructions}</p>
+                    ${recipe.image ? `<img src="${recipe.image}" alt="${recipe.title}">` : ''}
+                `;
+                recipesDiv.appendChild(recipeElement);
+            });
+        }
+
+        function displayMealPlans(mealPlans) {
+            const mealPlansDiv = document.getElementById('mealPlans');
+            mealPlans.forEach(plan => {
+                const planElement = document.createElement('div');
+                planElement.innerHTML = `
+                    <h3>Meal Plan</h3>
+                    <p>Monday: ${plan.monday}</p>
+                    <p>Tuesday: ${plan.tuesday}</p>
+                    <p>Wednesday: ${plan.wednesday}</p>
+                    <p>Thursday: ${plan.thursday}</p>
+                    <p>Friday: ${plan.friday}</p>
+                    <p>Saturday: ${plan.saturday}</p>
+                    <p>Sunday: ${plan.sunday}</p>
+                `;
+                mealPlansDiv.appendChild(planElement);
+            });
+        }
+
+        // Fetch data on page load
+        fetchSavedData();
+    </script>
+</body>
+</html>
